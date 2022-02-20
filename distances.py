@@ -2,7 +2,7 @@ import math
 import random
 
 # read data
-f = open('glass.csv', 'r')
+f = open('water_potability.csv', 'r')
 lines = f.readlines()
 
 # get unique cats
@@ -56,8 +56,13 @@ def predict(point):
 
 # sample acc
 points = []
-for i in range(1, len(lines)):
-    points.append(i)
+for i in range(0, 100):
+    points.append(random.randrange(0, len(lines) - 1))
+
+# actual acc
+# points = []
+# for i in range(1, len(lines)):
+#     points.append(i)
 
 total = 0
 correct = 0
@@ -66,7 +71,6 @@ for i in range(0, len(points)):
     point = lines[points[i]].replace('\n', '').split(',')
     real = str(point[len(point) - 1])
     prediction = str(predict(point))
-    print('real: ' + str(real) + ', prediction: ' + str(prediction))
     if real == prediction:
         correct += 1
     total += 1
