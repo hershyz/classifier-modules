@@ -2,7 +2,7 @@ import math
 import random
 
 # read data
-f = open('glass.csv', 'r')
+f = open('water_potability.csv', 'r')
 lines = f.readlines()
 
 # get unique cats
@@ -28,17 +28,19 @@ def predict(point):
         
         comparison = lines[i].replace('\n', '').split(',')
         comparison_cat = comparison[len(comparison) - 1]
-        
+
         error = 0
-        for j in range(0, len(point) - 1):    
+        curr_total = 0
+        for j in range(0, len(point) - 1):
             try:
                 num = float(point[j])
                 comparison_num = float(comparison[j])
                 error += abs((comparison_num - num) / num)
+                curr_total += 1
             except Exception as e:
                 # print(e)
                 continue
-        percents[comparison_cat] = percents[comparison_cat] + error
+        percents[comparison_cat] = percents[comparison_cat] + (error / curr_total)
         totals[comparison_cat] = totals[comparison_cat] + 1
 
     min = percents[cats[0]] / totals[cats[0]]
@@ -56,14 +58,14 @@ def predict(point):
 
 
 # sample acc
-# points = []
-# for i in range(0, 100):
-#     points.append(random.randrange(0, len(lines) - 1))
+points = []
+for i in range(0, 100):
+    points.append(random.randrange(0, len(lines) - 1))
 
 # actual acc
-points = []
-for i in range(1, len(lines)):
-    points.append(i)
+# points = []
+# for i in range(1, len(lines)):
+#     points.append(i)
 
 total = 0
 correct = 0
