@@ -2,7 +2,7 @@ import math
 import random
 
 # read data
-f = open('glass.csv', 'r')
+f = open('water_potability.csv', 'r')
 lines = f.readlines()
 
 # get unique cats
@@ -18,10 +18,10 @@ for i in range(1, len(lines)):
 # make predictions
 def predict(point):
 
-    distances = {}
+    percents = {}
     totals = {}
     for cat in cats:
-        distances[cat] = 0
+        percents[cat] = 0
         totals[cat] = 0
 
     for i in range(1, len(lines)):
@@ -29,21 +29,22 @@ def predict(point):
         comparison = lines[i].replace('\n', '').split(',')
         comparison_cat = comparison[len(comparison) - 1]
         
-        dist = 0
+        error = 0
         for j in range(0, len(point) - 1):    
             try:
                 num = float(point[j])
                 comparison_num = float(comparison[j])
-                dist += (comparison_num - num) ** 2
-            except:
+                error += abs((comparison_num - num) / num)
+            except Exception as e:
+                # print(e)
                 continue
-        distances[comparison_cat] = distances[comparison_cat] + math.sqrt(dist)
+        percents[comparison_cat] = percents[comparison_cat] + math.sqrt(error)
         totals[comparison_cat] = totals[comparison_cat] + 1
 
-    min = distances[cats[0]] / totals[cats[0]]
+    min = percents[cats[0]] / totals[cats[0]]
     min_cat = cats[0]
     for cat in cats:
-        curr = distances[cat] / totals[cat]
+        curr = percents[cat] / totals[cat]
         if curr < min:
             min = curr
             min_cat = cat
@@ -55,14 +56,14 @@ def predict(point):
 
 
 # sample acc
-# points = []
-# for i in range(0, 100):
-#     points.append(random.randrange(0, len(lines) - 1))
+points = []
+for i in range(0, 100):
+    points.append(random.randrange(0, len(lines) - 1))
 
 # actual acc
-points = []
-for i in range(1, len(lines)):
-    points.append(i)
+# points = []
+# for i in range(1, len(lines)):
+#     points.append(i)
 
 total = 0
 correct = 0
