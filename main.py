@@ -54,7 +54,7 @@ def predict(point):
 
 
 
-# -----------------------
+# sample acc
 points = []
 for i in range(0, 100):
     points.append(random.randint(1, len(lines) - 1))
