@@ -56,31 +56,41 @@ def predict(point):
 
 
 
-# test only positive results
-for i in range(0, len(lines)):
-    point = lines[i].replace('\n', '').split(',')
+# predict only positive tests
+# correct = 0
+# total = 0
+# for i in range(0, len(lines)):
+#     point = lines[i].replace('\n', '').split(',')
+#     expected = str(point[len(point) - 1])
+#     if expected == '1':
+#         prediction = str(predict(point))
+#         if prediction == expected:
+#             correct +=1
+#         total += 1
+# print('acc: ' + str(correct / total))
+        
 
 # sample acc
 # points = []
 # for i in range(0, 100):
 #     points.append(random.randrange(0, len(lines) - 1))
 
-# actual acc
-# points = []
-# for i in range(1, len(lines)):
-#     points.append(i)
+# entire (population) acc
+points = []
+for i in range(1, len(lines)):
+    points.append(i)
 
-# total = 0
-# correct = 0
+total = 0
+correct = 0
 
-# for i in range(0, len(points)):
-#     point = lines[points[i]].replace('\n', '').split(',')
-#     real = str(point[len(point) - 1])
-#     prediction = str(predict(point))
-#     # print(str(real) + ', ' + str(prediction))
-#     if real == prediction:
-#         correct += 1
-#     total += 1
+for i in range(0, len(points)):
+    point = lines[points[i]].replace('\n', '').split(',')
+    real = str(point[len(point) - 1])
+    prediction = str(predict(point))
+    # print(str(real) + ', ' + str(prediction))
+    if real == prediction:
+        correct += 1
+    total += 1
 
-# acc = (correct / total) * 100
-# print('accuracy: ' + str(acc))
+acc = (correct / total) * 100
+print('accuracy: ' + str(acc))
