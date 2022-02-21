@@ -1,8 +1,7 @@
-import math
 import random
 
 # read data
-f = open('glass.csv', 'r')
+f = open('cervical_cancer.csv', 'r')
 lines = f.readlines()
 
 # get unique cats
@@ -57,27 +56,31 @@ def predict(point):
 
 
 
+# test only positive results
+for i in range(0, len(lines)):
+    point = lines[i].replace('\n', '').split(',')
+
 # sample acc
 # points = []
 # for i in range(0, 100):
 #     points.append(random.randrange(0, len(lines) - 1))
 
 # actual acc
-points = []
-for i in range(1, len(lines)):
-    points.append(i)
+# points = []
+# for i in range(1, len(lines)):
+#     points.append(i)
 
-total = 0
-correct = 0
+# total = 0
+# correct = 0
 
-for i in range(0, len(points)):
-    point = lines[points[i]].replace('\n', '').split(',')
-    real = str(point[len(point) - 1])
-    prediction = str(predict(point))
-    print(str(real) + ', ' + str(prediction))
-    if real == prediction:
-        correct += 1
-    total += 1
+# for i in range(0, len(points)):
+#     point = lines[points[i]].replace('\n', '').split(',')
+#     real = str(point[len(point) - 1])
+#     prediction = str(predict(point))
+#     # print(str(real) + ', ' + str(prediction))
+#     if real == prediction:
+#         correct += 1
+#     total += 1
 
-acc = (correct / total) * 100
-print('accuracy: ' + str(acc))
+# acc = (correct / total) * 100
+# print('accuracy: ' + str(acc))
