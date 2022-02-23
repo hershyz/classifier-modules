@@ -1,2 +1,2 @@
-# classifier-module
-minimum abs overall distance classification modules
+# classifier-modules
+numerical categorical classification modules
