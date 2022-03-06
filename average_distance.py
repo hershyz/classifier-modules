@@ -1,5 +1,5 @@
 from copy import deepcopy
-
+import math
 
 def percent_classifier_model(path):
     
@@ -56,15 +56,14 @@ def predict(model, point):
     distances = {}
     for cat in model:
         cat_distance = 0
-        distance_total = 0
         cat_arr = model[cat]
         for i in range(0, len(cat_arr)):
             try:
-                cat_distance += abs(cat_arr[i] - point[i])
+                cat_distance += (abs(cat_arr[i] - point[i]) ** 2)
                 distance_total += 1
             except:
                 continue
-        cat_distance /= distance_total
+        cat_distance = math.sqrt(cat_distance)
         distances[cat] = cat_distance
     
     min_distance = 1000000000000
@@ -78,7 +77,8 @@ def predict(model, point):
 
 
 # training
-model = percent_classifier_model('cervical_cancer.csv')
+dataset = 'cervical_cancer.csv'
+model = percent_classifier_model(dataset)
 '''
 model:
 {
@@ -89,7 +89,7 @@ model:
 
 
 # prediction sequence
-f = open('cervical_cancer.csv', 'r')
+f = open(dataset, 'r')
 lines = f.readlines()
 points = []
 for i in range(1, len(lines)):
