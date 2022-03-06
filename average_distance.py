@@ -114,7 +114,7 @@ for point in points:
         correct += 1
     total += 1
 
-print('accuracy: ' + str(correct / total))
+print('overall accuracy: ' + str(correct / total))
 
 
 # positive test accuracy
@@ -129,3 +129,17 @@ for point in points:
         total += 1
 
 print('positive test accuracy: ' + str(correct / total))
+
+
+# negative test accuracy
+total = 0
+correct = 0
+for point in points:
+    real = str(point[len(point) - 1])
+    real = real.replace('.0', '')
+    if real == '0':
+        if predict(model, point) == real:
+            correct += 1
+        total += 1
+
+print('negative test accuracy: ' + str(correct / total))
