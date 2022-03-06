@@ -51,8 +51,39 @@ def percent_classifier_model(path):
     return model
 
 
+# def predict(model, line):
+def predict(model, point):
+
+    errors = {}
+    for cat in model:
+        cat_error = 0
+        total = 0
+        avg_arr = model[cat]
+        for i in range(0, len(avg_arr)):
+            e = avg_arr[i]
+            a = point[i]
+            if e == 0:
+                e = 0.1
+            try:
+                cat_error += (abs(a - e) / e)
+                total += 1
+            except:
+                continue
+        cat_error /= total
+        errors[cat] = cat_error
+    
+    min = 100000000
+    min_cat = ''
+    for cat in errors:
+        if errors[cat] < min:
+            min = errors[cat]
+            min_cat = cat
+    
+    return min_cat
+
+
+
 model = percent_classifier_model('cervical_cancer.csv')
-print(model)
 
 '''
 model:
@@ -61,3 +92,29 @@ model:
     '1': [28.963636363636365, 2.5454545454545454, 17.345454545454544, 2.2363636363636363, 0.18181818181818182, 2.1503085983454544, 0.6529673114127272, 0.6545454545454545, 3.3179999999999996, 0.16363636363636364, 0.7090909090909091, 0.21818181818181817, 0.36363636363636365, 0.12727272727272726, 0.0, 0.0, 0.12727272727272726, 0.0, 0.0, 0.01818181818181818, 0.0, 0.0, 0.09090909090909091, 0.0, 0.0, 0.2, 1.0363636363636364, 1.0363636363636364, 0.10909090909090909, 0.05454545454545454, 0.10909090909090909, 0.12727272727272726, 0.45454545454545453, 0.8727272727272727, 0.32727272727272727]
 }
 '''
+
+# prediction sequence
+f = open('cervical_cancer.csv', 'r')
+lines = f.readlines()
+points = []
+for i in range(1, len(lines)):
+    arr = lines[i].split(',')
+    point = []
+    for elem in arr:
+        try:
+            point.append(float(elem))
+        except:
+            point.append('.')
+    points.append(point)
+
+total = 0
+correct = 0
+for point in points:
+    real = str(point[len(point) - 1])
+    real = real.replace('.0', '')
+    prediction = predict(model, point)
+    if real == prediction:
+        correct += 1
+    total += 1
+
+print('accuracy: ' + str(correct / total))
