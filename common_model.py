@@ -1,4 +1,5 @@
 from copy import deepcopy
+from distutils.log import error
 import math
 
 def percent_classifier_model(path):
@@ -51,7 +52,7 @@ def percent_classifier_model(path):
     return model
 
 
-def predict(model, point):
+def predict_sqrt_distances(model, point):
 
     distances = {}
     for cat in model:
@@ -75,19 +76,58 @@ def predict(model, point):
     return min_cat
 
 
+def predict_abs_distances(model, point):
+
+    distances = {}
+    for cat in model:
+        cat_distance = 0
+        cat_arr = model[cat]
+        for i in range(0, len(cat_arr)):
+            try:
+                cat_distance += abs(cat_arr[i] - point[i]) # calculating raw abs distance between average feature and point feature
+            except:
+                continue
+        distances[cat] = cat_distance
+    
+    min_distance = 1000000000000
+    min_cat = ''
+    for cat in distances:
+        if distances[cat] < min_distance:
+            min_distance = distances[cat]
+            min_cat = cat
+
+    return min_cat
+
+
+def predict_percent_error(model, point): # this model is basically useless
+
+    distances = {}
+    for cat in model:
+        cat_error = 0
+        cat_arr = model[cat]
+        for i in range(0, len(cat_arr)):
+            try:
+                cat_error += (abs(cat_arr[i] - point[i]) / cat_arr[i])
+            except:
+                continue
+        distances[cat] = cat_error
+    
+    min_distance = 1000000000000
+    min_cat = ''
+    for cat in distances:
+        if distances[cat] < min_distance:
+            min_distance = distances[cat]
+            min_cat = cat
+
+    return min_cat
+
+
 # training
 dataset = 'cervical_cancer.csv'
 model = percent_classifier_model(dataset)
-'''
-model (cervical cancer csv):
-{
-    '0': [26.696139476961395, 2.4495641344956414, 16.841843088418432, 2.12079701120797, 0.14072229140722292, 1.1362361403810708, 0.43212134018792037, 0.5541718555417185, 1.8802296401519307, 0.0921544209215442, 0.4264881693648817, 0.08343711083437111, 0.14072229140722292, 0.0460772104607721, 0.0, 0.0049813200498132005, 0.0448318804483188, 0.0224159402241594, 0.0012453300124533001, 0.0, 0.0012453300124533001, 0.0, 0.0161892901618929, 0.0012453300124533001, 0.0024906600249066002, 0.07970112079701121, 0.47198007471980075, 0.44333748443337484, 0.014943960149439602, 0.007471980074719801, 0.014943960149439602, 0.021170610211706103, 0.012453300124533, 0.0323785803237858, 0.0323785803237858],
-    '1': [28.963636363636365, 2.5454545454545454, 17.345454545454544, 2.2363636363636363, 0.18181818181818182, 2.1503085983454544, 0.6529673114127272, 0.6545454545454545, 3.3179999999999996, 0.16363636363636364, 0.7090909090909091, 0.21818181818181817, 0.36363636363636365, 0.12727272727272726, 0.0, 0.0, 0.12727272727272726, 0.0, 0.0, 0.01818181818181818, 0.0, 0.0, 0.09090909090909091, 0.0, 0.0, 0.2, 1.0363636363636364, 1.0363636363636364, 0.10909090909090909, 0.05454545454545454, 0.10909090909090909, 0.12727272727272726, 0.45454545454545453, 0.8727272727272727, 0.32727272727272727]
-}
-'''
 
 
-# prediction sequence
+# parse raw data
 f = open(dataset, 'r')
 lines = f.readlines()
 points = []
@@ -102,27 +142,52 @@ for i in range(1, len(lines)):
     points.append(point)
 
 
-# automated by-category accuracies
+print('FORMAT: {class: [correct, total]}')
+
+
+# predict_sqrt_distances
 accs = {}
 for cat in model:
     accs[cat] = [0, 0] # [correct, total]
-
 for point in points:
     real = str(point[len(point) - 1])
     real = real.replace('.0', '')
-    prediction = predict(model, point)
+    prediction = predict_sqrt_distances(model, point)
     arr = accs[real]
     if real == prediction:
         arr[0] += 1
     arr[1] += 1
     accs[real] = deepcopy(arr)
+print('predict_sqrt_distances: ' + str(accs))
 
-# calculate total accuracy
-correct = 0
-total = 0
-for cat in accs:
-    print('class ' + str(cat) + ' acc: ' + str(accs[cat][0] / accs[cat][1]))
-    correct += accs[cat][0]
-    total += accs[cat][1]
 
-print('overall acc: ' + str(correct / total))
+# predict_abs_distances
+accs = {}
+for cat in model:
+    accs[cat] = [0, 0] # [correct, total]
+for point in points:
+    real = str(point[len(point) - 1])
+    real = real.replace('.0', '')
+    prediction = predict_abs_distances(model, point)
+    arr = accs[real]
+    if real == prediction:
+        arr[0] += 1
+    arr[1] += 1
+    accs[real] = deepcopy(arr)
+print('predict_abs_distances: ' + str(accs))
+
+
+# predict_percent_error
+accs = {}
+for cat in model:
+    accs[cat] = [0, 0] # [correct, total]
+for point in points:
+    real = str(point[len(point) - 1])
+    real = real.replace('.0', '')
+    prediction = predict_percent_error(model, point)
+    arr = accs[real]
+    if real == prediction:
+        arr[0] += 1
+    arr[1] += 1
+    accs[real] = deepcopy(arr)
+print('predict_percent_error: ' + str(accs))
